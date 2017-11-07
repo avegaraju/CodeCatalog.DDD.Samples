@@ -14,20 +14,5 @@ namespace CodeCatalog.DDD.Domain.Tests.Unit
             Order order = new Order();
             order.Should().NotBeNull();
         }
-
-        [Fact]
-        public void CanCreateOrderUsingFactory()
-        {
-             var order =  Order
-                .OrderFactory.Create();
-
-            order.Should().NotBeNull();
-        }
-
-        [Fact]
-        public void CanCreateOrderFromOrderRequest()
-        {
-            
-        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using CodeCatalog.DDD.Domain.UseCase;
 
 namespace CodeCatalog.DDD.Domain
 {
@@ -8,9 +9,12 @@ namespace CodeCatalog.DDD.Domain
     {
         public static class OrderFactory
         {
-            public static Order Create()
+            public static Order CreateFrom(OrderRequest orderRequest)
             {
-                return new Order();
+                if(orderRequest.Products == null)
+                    throw new ArgumentNullException(nameof(orderRequest.Products));
+
+                throw new NotImplementedException();
             }
         }
     }
