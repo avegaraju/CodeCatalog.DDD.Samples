@@ -7,10 +7,10 @@ using Xunit;
 
 namespace CodeCatalog.DDD.Domain.Tests.Unit
 {
-    public class OrderFactoryTests
+    public class ProductFactoryTests
     {
         [Fact]
-        public void CreateFrom_WithValidRequest_CreatesOrder()
+        public void CreateFrom_CreatesProducts()
         {
             OrderRequest request = new OrderRequest()
             {
@@ -26,14 +26,27 @@ namespace CodeCatalog.DDD.Domain.Tests.Unit
                     }
                 }
             };
+            var products = Product.ProductFactory.CreateFrom(request.Products);
 
-            var order = Order.OrderFactory.CreateFrom(request);
-
-            order.Should().NotBeNull();
+            products.Should().HaveCount(request.Products.Count);
         }
 
         [Fact]
-        public void CreateFrom_CreatesOrderWithCorrectProperties()
+        public void CreateFrom_WithInvalidRequestThrowsException()
+        {
+            OrderRequest request = new OrderRequest()
+            {
+                CustomerId = default(CustomerId),
+                IsPrivilegeCustomer = false,
+                Products = null
+            };
+            Action action = () => Product.ProductFactory.CreateFrom(request.Products);
+
+            action.ShouldThrow<ArgumentException>();
+        }
+
+        [Fact]
+        public void CreateFrom_WhenProductDiscountIsMoreThanProductPrice_ThrowsException()
         {
             OrderRequest request = new OrderRequest()
             {
@@ -43,24 +56,16 @@ namespace CodeCatalog.DDD.Domain.Tests.Unit
                 {
                     new ProductRequest()
                     {
-                        Discount = 10.3,
-                        Price = 12,
+                        Discount = 190.3,
+                        Price = 1,
                         ProductId = (ProductId) 1
                     }
                 }
             };
 
-            var order = Order.OrderFactory.CreateFrom(request);
+            Action action = () => Product.ProductFactory.CreateFrom(request.Products);
 
-            var expectedOrder = new
-            {
-                Customer = Customer.CustomerFactory
-                            .Create(request.CustomerId, 
-                                    request.IsPrivilegeCustomer),
-                Products = Product.ProductFactory.CreateFrom(request.Products)
-            };
-
-            order.ShouldBeEquivalentTo(expectedOrder);
+            action.ShouldThrow<ArgumentException>();
         }
     }
 }

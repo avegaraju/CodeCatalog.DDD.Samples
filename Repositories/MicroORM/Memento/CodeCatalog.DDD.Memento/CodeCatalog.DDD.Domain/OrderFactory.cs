@@ -10,32 +10,14 @@ namespace CodeCatalog.DDD.Domain
         {
             public static Order CreateFrom(OrderRequest orderRequest)
             {
-                if(orderRequest.Products == null)
-                    throw new ArgumentNullException(nameof(orderRequest.Products));
-                if (IsDiscountGreaterThanProductPrice(orderRequest.Products))
-                    throw new ArgumentException("Invalid discount amount.");
+                var customer = Customer.CustomerFactory
+                    .Create(orderRequest.CustomerId,
+                            orderRequest.IsPrivilegeCustomer);
 
-                return new Order(orderRequest.CustomerId,
-                    orderRequest.IsPrivilegeCustomer,
-                    orderRequest.Products);
-            }
+                var products = Product.ProductFactory
+                    .CreateFrom(orderRequest.Products);
 
-            private static bool IsDiscountGreaterThanProductPrice(
-                IReadOnlyList<ProductRequest> productRequests)
-            {
-                foreach (var productRequest in productRequests)
-                {
-                    var discountAmount = GetDiscountAmount(productRequest);
-
-                    if (productRequest.Price - discountAmount < 0)
-                        return true;
-                }
-                return false;
-            }
-
-            private static double GetDiscountAmount(ProductRequest productRequest)
-            {
-                return (productRequest.Price * productRequest.Discount) / 100;
+                return new Order(customer, products);
             }
         }
     }

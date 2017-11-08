@@ -1,16 +1,17 @@
 ﻿using System.Collections.Generic;
-using CodeCatalog.DDD.Domain.Types;
-using CodeCatalog.DDD.Domain.UseCase;
 
 namespace CodeCatalog.DDD.Domain
 {
     public partial class Order
     {
-        private Order(CustomerId customerId,
-            bool isPrivilegeCustomer,
-            IReadOnlyCollection<ProductRequest> products)
+        public Customer Customer { get; }
+        public IReadOnlyCollection<Product> Products { get; }
+
+        private Order(Customer customer, 
+                      IReadOnlyCollection<Product> products)
         {
-            
+            Customer = customer;
+            Products = products;
         }
     }
 }
