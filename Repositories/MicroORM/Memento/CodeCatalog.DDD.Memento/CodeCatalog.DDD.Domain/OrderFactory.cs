@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using CodeCatalog.DDD.Domain.UseCase;
 
 namespace CodeCatalog.DDD.Domain
 {
@@ -8,9 +8,16 @@ namespace CodeCatalog.DDD.Domain
     {
         public static class OrderFactory
         {
-            public static Order Create()
+            public static Order CreateFrom(OrderRequest orderRequest)
             {
-                return new Order();
+                var customer = Customer.CustomerFactory
+                    .Create(orderRequest.CustomerId,
+                            orderRequest.IsPrivilegeCustomer);
+
+                var products = Product.ProductFactory
+                    .CreateFrom(orderRequest.Products);
+
+                return new Order(customer, products);
             }
         }
     }
