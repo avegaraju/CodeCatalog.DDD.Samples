@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using CodeCatalog.DDD.Domain.UseCase;
 
 namespace CodeCatalog.DDD.Domain
@@ -13,8 +12,30 @@ namespace CodeCatalog.DDD.Domain
             {
                 if(orderRequest.Products == null)
                     throw new ArgumentNullException(nameof(orderRequest.Products));
+                if (IsDiscountGreaterThanProductPrice(orderRequest.Products))
+                    throw new ArgumentException("Invalid discount amount.");
 
-                throw new NotImplementedException();
+                return new Order(orderRequest.CustomerId,
+                    orderRequest.IsPrivilegeCustomer,
+                    orderRequest.Products);
+            }
+
+            private static bool IsDiscountGreaterThanProductPrice(
+                IReadOnlyList<ProductRequest> productRequests)
+            {
+                foreach (var productRequest in productRequests)
+                {
+                    var discountAmount = GetDiscountAmount(productRequest);
+
+                    if (productRequest.Price - discountAmount < 0)
+                        return true;
+                }
+                return false;
+            }
+
+            private static double GetDiscountAmount(ProductRequest productRequest)
+            {
+                return (productRequest.Price * productRequest.Discount) / 100;
             }
         }
     }
