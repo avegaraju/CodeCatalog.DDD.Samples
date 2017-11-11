@@ -19,6 +19,9 @@ namespace CodeCatalog.DDD.Domain
                 if (IsDiscountGreaterThanProductPrice(productRequests))
                     throw new ArgumentException("Invalid discount amount.");
 
+                if(productRequests.Any(pr=> pr.Quantity < 1))
+                    throw new ArgumentException("Quantity cannot be less than 1.");
+
                 return productRequests
                     .Select(productRequest => new OrderLine(productRequest.ProductId,
                         productRequest.Discount,

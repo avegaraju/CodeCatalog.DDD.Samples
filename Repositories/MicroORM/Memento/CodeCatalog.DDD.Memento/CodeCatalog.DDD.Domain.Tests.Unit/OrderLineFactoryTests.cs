@@ -19,7 +19,8 @@ namespace CodeCatalog.DDD.Domain.Tests.Unit
                 {
                     Discount = 10,
                     Price = 200,
-                    ProductId = (ProductId) 1
+                    ProductId = (ProductId) 1,
+                    Quantity = 1
                 }
             };
 
@@ -30,11 +31,32 @@ namespace CodeCatalog.DDD.Domain.Tests.Unit
             {
                 ProductId = (ProductId)1,
                 Price = 200,
-                Discount = 10
+                Discount = 10,
+                Quantity = 1
             };
 
             orderLine.First()
                 .ShouldBeEquivalentTo(expectedObject);
+        }
+
+        [Fact]
+        public void CreateFrom_WithZeroQuantity_ThrowsException()
+        {
+            var products = new List<ProductRequest>()
+            {
+                new ProductRequest()
+                {
+                    Discount = 10,
+                    Price = 200,
+                    ProductId = (ProductId) 1,
+                    Quantity = 0
+                }
+            };
+
+            Action action = () => OrderLine
+                .OrderLineFactory.CreateFrom(products);
+
+            action.ShouldThrow<ArgumentException>();
         }
 
         [Fact]

@@ -22,7 +22,7 @@ namespace CodeCatalog.DDD.Domain.Tests.Unit
                     {
                         Discount = 10.3,
                         Price = 12,
-                        ProductId = (ProductId) 1
+                        ProductId = (ProductId) 1,
                     }
                 }
             };
