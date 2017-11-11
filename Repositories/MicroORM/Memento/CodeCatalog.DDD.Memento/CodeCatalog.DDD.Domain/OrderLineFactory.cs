@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using CodeCatalog.DDD.Domain.Types;
 using CodeCatalog.DDD.Domain.UseCase;
 
 namespace CodeCatalog.DDD.Domain
@@ -17,12 +19,10 @@ namespace CodeCatalog.DDD.Domain
                 if (IsDiscountGreaterThanProductPrice(productRequests))
                     throw new ArgumentException("Invalid discount amount.");
 
-                List<OrderLine> orderLines = new List<OrderLine>()
-                {
-                    new OrderLine()
-                };
-
-                return orderLines;
+                return productRequests
+                    .Select(productRequest => new OrderLine(productRequest.ProductId,
+                        productRequest.Discount,
+                        productRequest.Price)).ToList();
             }
 
             private static bool IsDiscountGreaterThanProductPrice(

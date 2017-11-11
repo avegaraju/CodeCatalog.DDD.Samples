@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CodeCatalog.DDD.Domain.Types;
 using CodeCatalog.DDD.Domain.UseCase;
 using FluentAssertions;
@@ -10,7 +11,7 @@ namespace CodeCatalog.DDD.Domain.Tests.Unit
     public class OrderLineFactoryTests
     {
         [Fact]
-        public void CanCreateOrderLine()
+        public void CreateFrom_WithValidRequest_CreatesOrderLines()
         {
             var products = new List<ProductRequest>()
             {
@@ -25,7 +26,15 @@ namespace CodeCatalog.DDD.Domain.Tests.Unit
             var orderLine = OrderLine
                 .OrderLineFactory.CreateFrom(products);
 
-            orderLine.Should().NotBeNullOrEmpty();
+            var expectedObject = new
+            {
+                ProductId = (ProductId)1,
+                Price = 200,
+                Discount = 10
+            };
+
+            orderLine.First()
+                .ShouldBeEquivalentTo(expectedObject);
         }
 
         [Fact]
