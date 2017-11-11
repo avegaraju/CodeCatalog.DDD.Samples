@@ -8,7 +8,7 @@ namespace CodeCatalog.DDD.Domain
         public double Discount { get; }
         public double Price { get; }
 
-        public OrderLine(ProductId productId, double discount, double price)
+        private OrderLine(ProductId productId, double discount, double price)
         {
             ProductId = productId;
             Discount = discount;
