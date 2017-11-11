@@ -10,42 +10,20 @@ namespace CodeCatalog.DDD.Domain.Tests.Unit
     public class OrderFactoryTests
     {
         [Fact]
-        public void CreateFrom_WithValidRequest_CreatesOrder()
-        {
-            OrderRequest request = new OrderRequest()
-            {
-                CustomerId = default(CustomerId),
-                IsPrivilegeCustomer = false,
-                Products = new List<ProductRequest>()
-                {
-                    new ProductRequest()
-                    {
-                        Discount = 10.3,
-                        Price = 12,
-                        ProductId = (ProductId) 1
-                    }
-                }
-            };
-
-            var order = Order.OrderFactory.CreateFrom(request);
-
-            order.Should().NotBeNull();
-        }
-
-        [Fact]
         public void CreateFrom_CreatesOrderWithCorrectProperties()
         {
             OrderRequest request = new OrderRequest()
             {
                 CustomerId = default(CustomerId),
                 IsPrivilegeCustomer = false,
-                Products = new List<ProductRequest>()
+                ProductRequests = new List<ProductRequest>()
                 {
                     new ProductRequest()
                     {
                         Discount = 10.3,
                         Price = 12,
-                        ProductId = (ProductId) 1
+                        ProductId = (ProductId) 1,
+                        Quantity = 1
                     }
                 }
             };
@@ -57,7 +35,8 @@ namespace CodeCatalog.DDD.Domain.Tests.Unit
                 Customer = Customer.CustomerFactory
                             .Create(request.CustomerId, 
                                     request.IsPrivilegeCustomer),
-                Products = Product.ProductFactory.CreateFrom(request.Products)
+                OrderLines = OrderLine
+                .OrderLineFactory.CreateFrom(request.ProductRequests)
             };
 
             order.ShouldBeEquivalentTo(expectedOrder);

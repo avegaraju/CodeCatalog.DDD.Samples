@@ -5,7 +5,7 @@ namespace CodeCatalog.DDD.Domain.UseCase
 {
     public class OrderRequest
     {
-        public IReadOnlyList<ProductRequest> Products { get; set; }
+        public IReadOnlyList<ProductRequest> ProductRequests { get; set; }
         public CustomerId CustomerId { get; set; }
         public bool IsPrivilegeCustomer { get; set; }
     }

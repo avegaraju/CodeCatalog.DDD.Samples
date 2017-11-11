@@ -14,7 +14,7 @@ namespace CodeCatalog.DDD.Domain.Tests.Unit
             {
                 CustomerId = (CustomerId) 1,
                 IsPrivilegeCustomer = false,
-                Products = null
+                ProductRequests = null
             };
 
             var customer = Customer.CustomerFactory

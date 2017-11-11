@@ -6,28 +6,26 @@ using CodeCatalog.DDD.Domain.UseCase;
 
 namespace CodeCatalog.DDD.Domain
 {
-    public partial class Product
+    public partial class OrderLine
     {
-        public static class ProductFactory
+        public static class OrderLineFactory
         {
-            public static IReadOnlyCollection<Product> CreateFrom(
+            public static IReadOnlyCollection<OrderLine> CreateFrom(
                 IReadOnlyCollection<ProductRequest> productRequests)
             {
-                if(productRequests == null)
+                if (productRequests == null)
                     throw new ArgumentException("Products must be provided.");
 
                 if (IsDiscountGreaterThanProductPrice(productRequests))
                     throw new ArgumentException("Invalid discount amount.");
 
-                IList<Product> products = new List<Product>();
-                foreach (var productRequest in productRequests)
-                {
-                    products.Add(new Product(productRequest.ProductId,
-                                            productRequest.Discount,
-                                            productRequest.Price));
-                }
+                if(productRequests.Any(pr=> pr.Quantity < 1))
+                    throw new ArgumentException("Quantity cannot be less than 1.");
 
-                return products.ToList();
+                return productRequests
+                    .Select(productRequest => new OrderLine(productRequest.ProductId,
+                        productRequest.Discount,
+                        productRequest.Price)).ToList();
             }
 
             private static bool IsDiscountGreaterThanProductPrice(

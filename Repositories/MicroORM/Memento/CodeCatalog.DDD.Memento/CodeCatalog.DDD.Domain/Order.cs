@@ -5,13 +5,13 @@ namespace CodeCatalog.DDD.Domain
     public partial class Order
     {
         public Customer Customer { get; }
-        public IReadOnlyCollection<Product> Products { get; }
+        public IReadOnlyCollection<OrderLine> OrderLines { get; }
 
         private Order(Customer customer, 
-                      IReadOnlyCollection<Product> products)
+                      IReadOnlyCollection<OrderLine> orderLines)
         {
             Customer = customer;
-            Products = products;
+            OrderLines = orderLines;
         }
     }
 }
