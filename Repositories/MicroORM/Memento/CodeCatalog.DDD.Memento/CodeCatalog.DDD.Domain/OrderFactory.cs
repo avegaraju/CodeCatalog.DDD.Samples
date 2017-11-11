@@ -14,8 +14,8 @@ namespace CodeCatalog.DDD.Domain
                     .Create(orderRequest.CustomerId,
                             orderRequest.IsPrivilegeCustomer);
 
-                var products = Product.ProductFactory
-                    .CreateFrom(orderRequest.Products);
+                var products = OrderLine.OrderLineFactory
+                    .CreateFrom(orderRequest.ProductRequests);
 
                 return new Order(customer, products);
             }

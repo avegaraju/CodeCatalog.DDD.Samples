@@ -16,7 +16,7 @@ namespace CodeCatalog.DDD.Domain.Tests.Unit
             {
                 CustomerId = default(CustomerId),
                 IsPrivilegeCustomer = false,
-                Products = new List<ProductRequest>()
+                ProductRequests = new List<ProductRequest>()
                 {
                     new ProductRequest()
                     {
@@ -39,7 +39,7 @@ namespace CodeCatalog.DDD.Domain.Tests.Unit
             {
                 CustomerId = default(CustomerId),
                 IsPrivilegeCustomer = false,
-                Products = new List<ProductRequest>()
+                ProductRequests = new List<ProductRequest>()
                 {
                     new ProductRequest()
                     {
@@ -57,7 +57,8 @@ namespace CodeCatalog.DDD.Domain.Tests.Unit
                 Customer = Customer.CustomerFactory
                             .Create(request.CustomerId, 
                                     request.IsPrivilegeCustomer),
-                Products = Product.ProductFactory.CreateFrom(request.Products)
+                OrderLines = OrderLine
+                .OrderLineFactory.CreateFrom(request.ProductRequests)
             };
 
             order.ShouldBeEquivalentTo(expectedOrder);
