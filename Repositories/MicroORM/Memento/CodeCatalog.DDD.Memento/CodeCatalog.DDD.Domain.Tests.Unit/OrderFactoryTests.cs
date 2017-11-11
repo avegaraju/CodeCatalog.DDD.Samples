@@ -10,29 +10,6 @@ namespace CodeCatalog.DDD.Domain.Tests.Unit
     public class OrderFactoryTests
     {
         [Fact]
-        public void CreateFrom_WithValidRequest_CreatesOrder()
-        {
-            OrderRequest request = new OrderRequest()
-            {
-                CustomerId = default(CustomerId),
-                IsPrivilegeCustomer = false,
-                ProductRequests = new List<ProductRequest>()
-                {
-                    new ProductRequest()
-                    {
-                        Discount = 10.3,
-                        Price = 12,
-                        ProductId = (ProductId) 1,
-                    }
-                }
-            };
-
-            var order = Order.OrderFactory.CreateFrom(request);
-
-            order.Should().NotBeNull();
-        }
-
-        [Fact]
         public void CreateFrom_CreatesOrderWithCorrectProperties()
         {
             OrderRequest request = new OrderRequest()
