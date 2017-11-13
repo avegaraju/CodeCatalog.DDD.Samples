@@ -25,7 +25,8 @@ namespace CodeCatalog.DDD.Domain
                 return productRequests
                     .Select(productRequest => new OrderLine(productRequest.ProductId,
                         productRequest.Discount,
-                        productRequest.Price)).ToList();
+                        productRequest.Price,
+                        productRequest.Quantity)).ToList();
             }
 
             private static bool IsDiscountGreaterThanProductPrice(
