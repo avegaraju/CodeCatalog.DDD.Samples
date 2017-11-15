@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CodeCatalog.DDD.Domain.Types;
-using CodeCatalog.DDD.Domain.UseCase;
+using CodeCatalog.DDD.Domain.UseCases;
 using FluentAssertions;
 using Xunit;
 

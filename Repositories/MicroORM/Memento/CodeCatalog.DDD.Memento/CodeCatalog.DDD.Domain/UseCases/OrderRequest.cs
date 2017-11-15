@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using CodeCatalog.DDD.Domain.Types;
 
-namespace CodeCatalog.DDD.Domain.UseCase
+namespace CodeCatalog.DDD.Domain.UseCases
 {
     public class OrderRequest
     {

@@ -1,15 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CodeCatalog.DDD.Domain
 {
     public partial class Order
     {
+        public Guid OrderId { get; }
         public Customer Customer { get; }
         public IReadOnlyCollection<OrderLine> OrderLines { get; }
 
-        private Order(Customer customer, 
+        private Order(Guid orderId,
+                      Customer customer,
                       IReadOnlyCollection<OrderLine> orderLines)
         {
+            OrderId = orderId;
             Customer = customer;
             OrderLines = orderLines;
         }
@@ -43,7 +47,7 @@ namespace CodeCatalog.DDD.Domain
 
             void ApplyAdditionalDiscount()
             {
-                amountToPay = (amountToPay * 5) /  100;
+                amountToPay = (amountToPay * 5) / 100;
             }
         }
     }

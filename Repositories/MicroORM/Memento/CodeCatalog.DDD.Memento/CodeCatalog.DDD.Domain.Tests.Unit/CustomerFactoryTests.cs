@@ -1,5 +1,5 @@
 ﻿using CodeCatalog.DDD.Domain.Types;
-using CodeCatalog.DDD.Domain.UseCase;
+using CodeCatalog.DDD.Domain.UseCases;
 using FluentAssertions;
 using Xunit;
 
