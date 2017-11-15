@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CodeCatalog.DDD.Domain.Types;
 using CodeCatalog.DDD.Domain.UseCases;
 using FluentAssertions;
@@ -13,7 +14,7 @@ namespace CodeCatalog.DDD.Domain.Tests.Unit
         {
             var orderRequest = CreateDefaultOrderRequest();
 
-            var order = Order.OrderFactory.CreateFrom(orderRequest);
+            var order = Order.OrderFactory.CreateFrom(Guid.NewGuid(), orderRequest);
 
             var amountToPay = order.CheckOut();
 
@@ -28,7 +29,7 @@ namespace CodeCatalog.DDD.Domain.Tests.Unit
             var orderRequest = CreateDefaultOrderRequest();
             orderRequest.IsPrivilegeCustomer = true;
 
-            var order = Order.OrderFactory.CreateFrom(orderRequest);
+            var order = Order.OrderFactory.CreateFrom(Guid.NewGuid(), orderRequest);
 
             var amountToPay = order.CheckOut();
 

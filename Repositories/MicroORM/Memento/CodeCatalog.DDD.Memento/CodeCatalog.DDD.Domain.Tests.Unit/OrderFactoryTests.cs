@@ -28,10 +28,13 @@ namespace CodeCatalog.DDD.Domain.Tests.Unit
                 }
             };
 
-            var order = Order.OrderFactory.CreateFrom(request);
+            var orderId = Guid.NewGuid();
+
+            var order = Order.OrderFactory.CreateFrom(orderId, request);
 
             var expectedOrder = new
             {
+                OrderId = orderId,
                 Customer = Customer.CustomerFactory
                             .Create(request.CustomerId, 
                                     request.IsPrivilegeCustomer),
