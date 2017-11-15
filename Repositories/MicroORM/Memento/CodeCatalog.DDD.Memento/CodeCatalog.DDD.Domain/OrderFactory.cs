@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using CodeCatalog.DDD.Domain.UseCase;
+using CodeCatalog.DDD.Domain.UseCases;
 
 namespace CodeCatalog.DDD.Domain
 {
