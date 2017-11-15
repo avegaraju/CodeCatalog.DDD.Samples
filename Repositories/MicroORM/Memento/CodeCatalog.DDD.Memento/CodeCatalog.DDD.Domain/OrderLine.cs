@@ -10,9 +10,9 @@ namespace CodeCatalog.DDD.Domain
         public uint Quantity { get; }
 
         private OrderLine(ProductId productId,
-            double discount,
-            double price,
-            uint quantity)
+                          double discount,
+                          double price,
+                          uint quantity)
         {
             ProductId = productId;
             Discount = discount;
