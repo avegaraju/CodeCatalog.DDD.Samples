@@ -19,5 +19,16 @@ namespace CodeCatalog.DDD.Domain
             Price = price;
             Quantity = quantity;
         }
+
+        public OrderLineState GetState()
+        {
+            return new OrderLineState()
+                   {
+                       ProductId = this.ProductId,
+                       Discount = this.Discount,
+                       Price = this.Price,
+                       Quantity = this.Quantity
+                   };
+        }
     }
 }

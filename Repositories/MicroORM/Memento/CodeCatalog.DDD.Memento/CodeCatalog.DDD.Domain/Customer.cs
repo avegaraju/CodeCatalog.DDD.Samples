@@ -1,4 +1,6 @@
-﻿using CodeCatalog.DDD.Domain.Types;
+﻿using System;
+
+using CodeCatalog.DDD.Domain.Types;
 
 namespace CodeCatalog.DDD.Domain
 {
@@ -12,6 +14,15 @@ namespace CodeCatalog.DDD.Domain
         {
             CustomerId = customerId;
             IsPrivilegeCustomer = isPrivilegeCustomer;
+        }
+
+        public CustomerState GetState()
+        {
+            return new CustomerState()
+                   {
+                       CustomerId = this.CustomerId,
+                       IsPrivilegeCustomer = this.IsPrivilegeCustomer
+                   };
         }
     }
 }

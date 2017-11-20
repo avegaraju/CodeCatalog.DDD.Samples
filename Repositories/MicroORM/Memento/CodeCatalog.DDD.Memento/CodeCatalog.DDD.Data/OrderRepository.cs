@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Emit;
 
 using CodeCatalog.DDD.Domain;
 using CodeCatalog.DDD.Domain.Infrastructure;
@@ -11,7 +14,76 @@ namespace CodeCatalog.DDD.Data
     {
         public void Add(Order order)
         {
-            throw new NotImplementedException();
+            var orderState = order.GetState();
+
+            using (Connection)
+            {
+                Connection.Open();
+
+                InsertOrder(orderState.OrderId, orderState.Customer.CustomerId);
+
+                InsertOrderLines(orderState.OrderId, orderState.OrderLines);
+            }
+        }
+
+        private void InsertOrderLines(Guid orderId, IEnumerable<OrderLineState> orderLines)
+        {
+            var parameters =  BuildParameters();
+
+            Connection
+                    .Execute(sql: "insert into OrderLine"
+                                  + "("
+                                  + "OrderId, "
+                                  + "ProductId, "
+                                  + "Quantity, "
+                                  + "Price, "
+                                  + "Discount "
+                                  + "values"
+                                  + "("
+                                  + ":OrderId, "
+                                  + ":ProductId, "
+                                  + ":Quantity, "
+                                  + ":Price, "
+                                  + ":Discount"
+                                  + ");",
+                                  param: parameters);
+
+            IEnumerable<DynamicParameters> BuildParameters()
+            {
+                return orderLines
+                        .Select(orderLine =>
+                                    new DynamicParameters(new
+                                                          {
+                                                              OrderId = orderId,
+                                                              ProductId = orderLine.ProductId,
+                                                              Quantity = orderLine.Quantity,
+                                                              Price = orderLine.Price,
+                                                              Discount = orderLine.Discount
+                                                          }))
+                        .ToList();
+            }
+        }
+
+        private void InsertOrder(Guid orderId, long customerId)
+        {
+            Connection
+                    .Execute(sql: "insert into Order"
+                                  + "("
+                                  + "Id, "
+                                  + "CustomerId, "
+                                  + "PaymentProcessed"
+                                  + ") "
+                                  + "values"
+                                  + "("
+                                  + ":Id, "
+                                  + ":CustomerId, "
+                                  + "'N'"
+                                  + ");",
+                             param: new
+                                    {
+                                        Id = orderId,
+                                        CustomerId = customerId
+                                    });
         }
 
         public void Save(Order order)

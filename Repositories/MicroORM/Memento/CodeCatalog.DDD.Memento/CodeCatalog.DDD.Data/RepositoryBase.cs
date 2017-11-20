@@ -48,6 +48,7 @@ namespace CodeCatalog.DDD.Data
                 Connection.Execute("create table Customer "
                                    + "( "
                                    + "Id integer identity primary key autoincrement, "
+                                   + "IsPrivilegeCustomer char not null, "
                                    + "FirstName varchar(100) not null);");
             }
 
@@ -64,10 +65,12 @@ namespace CodeCatalog.DDD.Data
                 Connection.Execute("create table OrderLine "
                                    + "( "
                                    + "Id integer identity primary key autoincrement, "
+                                   + "OrderId text not null, "
                                    + "ProductId integer not null, "
                                    + "Quantity integer not null ,"
                                    + "Price double not null, "
                                    + "Discount double not null, "
+                                   + "FOREIGN KEY (OrderId) REFERNCES Order(Id), "
                                    + "FOREIGN KEY (ProductId) REFERENCES Product(Id));");
             }
 
@@ -77,10 +80,8 @@ namespace CodeCatalog.DDD.Data
                                    + "( "
                                    + "Id  text primary key, "
                                    + "CustomerId integer not null, "
-                                   + "OrderLineId integer not null, "
                                    + "PaymentProcessed char not null"
-                                   + "FOREIGN KEY (CustomerId) REFERENCES Customer(Id), "
-                                   + "FOREIGN KEY (OrderLineId) REFERENCES OrderLine(Id));");
+                                   + "FOREIGN KEY (CustomerId) REFERENCES Customer(Id));");
             }
         }
 
@@ -99,7 +100,7 @@ namespace CodeCatalog.DDD.Data
 
             void PopulateCustomerTable()
             {
-                Connection.Execute("insert into Customer (FirstName) values('Test User'); ");
+                Connection.Execute("insert into Customer (IsPrivilegeCustomer, FirstName) values('Y','Test User'); ");
             }
         }
     }
