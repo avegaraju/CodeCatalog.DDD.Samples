@@ -5,6 +5,8 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <ApplicationIcon />
     <StartupObject />
+    <RootNamespace>CodeCatalog.DDD.Domain.Test.Unit</RootNamespace>
+    <AssemblyName>CodeCatalog.DDD.Domain.Test.Unit</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

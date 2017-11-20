@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CodeCatalog.DDD.Domain
 {
     public partial class Order
     {
-        public Guid OrderId { get; }
-        public Customer Customer { get; }
-        public IReadOnlyCollection<OrderLine> OrderLines { get; }
+        internal Guid OrderId { get; }
+        internal Customer Customer { get; }
+        internal IReadOnlyCollection<OrderLine> OrderLines { get; }
 
         private Order(Guid orderId,
                       Customer customer,
@@ -49,6 +50,23 @@ namespace CodeCatalog.DDD.Domain
             {
                 amountToPay = (amountToPay * 5) / 100;
             }
+        }
+
+        public OrderState GetState()
+        {
+            return new OrderState()
+                   {
+                       OrderId = this.OrderId,
+                       Customer = this.Customer.GetState(),
+                       OrderLines = GetState(this.OrderLines)
+                   };
+        }
+
+        static IEnumerable<OrderLineState> GetState(IEnumerable<OrderLine> orderLines)
+        {
+            return orderLines
+                    .Select(orderLine => orderLine.GetState())
+                    .ToList();
         }
     }
 }

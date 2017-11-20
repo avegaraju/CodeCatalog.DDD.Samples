@@ -4,19 +4,23 @@ using System.IO;
 
 using Dapper;
 
+using Microsoft.Data.Sqlite;
+
 namespace CodeCatalog.DDD.Data
 {
-    internal class RepositoryBase
+    public class RepositoryBase
     {
-        protected SqlConnection Connection { get; }
+        protected SqliteConnection Connection { get; }
 
-        public RepositoryBase()
+        public RepositoryBase(string databaseFileName)
         {
-            var databaseFile = Environment.CurrentDirectory + "\\DDDOrderSampleDb.sqlite";
+            var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
-            Connection = new SqlConnection("Data Source=" + databaseFile);
+            var databaseFilePath = Path.Combine(appData, databaseFileName);
 
-            CreateDatabaseIfNew(databaseFile);
+            Connection = new SqliteConnection("Data Source=" + databaseFilePath );
+
+            CreateDatabaseIfNew(databaseFilePath);
         }
 
         private void CreateDatabaseIfNew(string databaseFile)
@@ -28,8 +32,6 @@ namespace CodeCatalog.DDD.Data
             {
                 using (Connection)
                 {
-                    Connection.Open();
-
                     CreateTables();
                     SeedData();
                 }
@@ -45,42 +47,43 @@ namespace CodeCatalog.DDD.Data
 
             void CreateCustomerTable()
             {
-                Connection.Execute("create table Customer "
+                Connection.Execute("create table Customers "
                                    + "( "
-                                   + "Id integer identity primary key autoincrement, "
+                                   + "Id integer primary key autoincrement, "
+                                   + "IsPrivilegeCustomer char not null, "
                                    + "FirstName varchar(100) not null);");
             }
 
             void CreateProductTable()
             {
-                Connection.Execute("create table Product "
+                Connection.Execute("create table Products "
                                    + "( "
-                                   + "Id integer identity primary key autoincrement, "
+                                   + "Id integer primary key autoincrement, "
                                    + "ProductName varchar(100));");
             }
 
             void CreateOrderLineTable()
             {
-                Connection.Execute("create table OrderLine "
+                Connection.Execute("create table OrderLines "
                                    + "( "
-                                   + "Id integer identity primary key autoincrement, "
+                                   + "Id integer primary key autoincrement, "
+                                   + "OrderId text not null, "
                                    + "ProductId integer not null, "
                                    + "Quantity integer not null ,"
                                    + "Price double not null, "
                                    + "Discount double not null, "
-                                   + "FOREIGN KEY (ProductId) REFERENCES Product(Id));");
+                                   + "FOREIGN KEY (OrderId) REFERENCES Orders(Id), "
+                                   + "FOREIGN KEY (ProductId) REFERENCES Products(Id));");
             }
 
             void CreateOrderTable()
             {
-                Connection.Execute("create table Order "
+                Connection.Execute("create table Orders "
                                    + "( "
-                                   + "Id  text primary key, "
+                                   + "Id text primary key, "
                                    + "CustomerId integer not null, "
-                                   + "OrderLineId integer not null, "
-                                   + "PaymentProcessed char not null"
-                                   + "FOREIGN KEY (CustomerId) REFERENCES Customer(Id), "
-                                   + "FOREIGN KEY (OrderLineId) REFERENCES OrderLine(Id));");
+                                   + "PaymentProcessed char not null, "
+                                   + "FOREIGN KEY (CustomerId) REFERENCES Customers(Id));");
             }
         }
 
@@ -91,15 +94,15 @@ namespace CodeCatalog.DDD.Data
 
             void PopulateProductTable()
             {
-                Connection.Execute("insert into Product (ProductName) values('Nexus 6P'); "
-                                   + "insert into Product (ProductName) values('Nexus 5X'); "
-                                   + "insert into Product (ProductName) values('Nexus 6'); "
-                                   + "insert into Product (ProductName) values('Nexus 5');");
+                Connection.Execute("insert into Products (ProductName) values('Nexus 6P'); "
+                                   + "insert into Products (ProductName) values('Nexus 5X'); "
+                                   + "insert into Products (ProductName) values('Nexus 6'); "
+                                   + "insert into Products (ProductName) values('Nexus 5');");
             }
 
             void PopulateCustomerTable()
             {
-                Connection.Execute("insert into Customer (FirstName) values('Test User'); ");
+                Connection.Execute("insert into Customers (IsPrivilegeCustomer, FirstName) values('Y','Test User'); ");
             }
         }
     }
