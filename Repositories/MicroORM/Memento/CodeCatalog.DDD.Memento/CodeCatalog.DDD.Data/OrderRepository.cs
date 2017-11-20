@@ -22,8 +22,6 @@ namespace CodeCatalog.DDD.Data
 
             using (Connection)
             {
-                Connection.Open();
-
                 InsertOrder(orderState.OrderId, orderState.Customer.CustomerId);
 
                 InsertOrderLines(orderState.OrderId, orderState.OrderLines);

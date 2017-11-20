@@ -32,8 +32,6 @@ namespace CodeCatalog.DDD.Data
             {
                 using (Connection)
                 {
-                    Connection.Open();
-
                     CreateTables();
                     SeedData();
                 }
