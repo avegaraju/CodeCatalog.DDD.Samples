@@ -6,8 +6,8 @@ namespace CodeCatalog.DDD.Domain
 {
     public partial class Customer
     {
-        public CustomerId CustomerId { get; }
-        public bool IsPrivilegeCustomer { get; }
+        internal CustomerId CustomerId { get; }
+        internal bool IsPrivilegeCustomer { get; }
 
         private Customer(CustomerId customerId,
             bool isPrivilegeCustomer)

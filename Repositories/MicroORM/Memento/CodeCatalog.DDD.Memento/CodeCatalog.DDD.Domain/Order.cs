@@ -6,9 +6,9 @@ namespace CodeCatalog.DDD.Domain
 {
     public partial class Order
     {
-        private Guid OrderId { get; }
-        private Customer Customer { get; }
-        private IReadOnlyCollection<OrderLine> OrderLines { get; }
+        internal Guid OrderId { get; }
+        internal Customer Customer { get; }
+        internal IReadOnlyCollection<OrderLine> OrderLines { get; }
 
         private Order(Guid orderId,
                       Customer customer,

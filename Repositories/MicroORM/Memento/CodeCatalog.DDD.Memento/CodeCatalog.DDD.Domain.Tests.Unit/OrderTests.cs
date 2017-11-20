@@ -67,9 +67,12 @@ namespace CodeCatalog.DDD.Domain.Tests.Unit
         private double CalculateAmountToPay(Order order)
         {
             double amountToPay = 0;
-            foreach (var orderLine in order.OrderLines)
+
+            var orderState =  order.GetState();
+            
+            foreach (var orderLine in orderState.OrderLines)
             {
-                double discountAmount = GetApplicableDiscount(orderLine);
+                double discountAmount = CalculateApplicableDiscount(orderLine);
                 double productPriceAfterDiscount = ApplyDiscount(orderLine, discountAmount);
 
                 amountToPay += productPriceAfterDiscount;
@@ -78,12 +81,12 @@ namespace CodeCatalog.DDD.Domain.Tests.Unit
             return amountToPay;
         }
 
-        private static double ApplyDiscount(OrderLine orderLine, double discountAmount)
+        private static double ApplyDiscount(OrderLineState orderLine, double discountAmount)
         {
             return (orderLine.Price - discountAmount) * orderLine.Quantity;
         }
 
-        private static double GetApplicableDiscount(OrderLine orderLine)
+        private static double CalculateApplicableDiscount(OrderLineState orderLine)
         {
             return (orderLine.Price * orderLine.Discount) / 100;
         }
