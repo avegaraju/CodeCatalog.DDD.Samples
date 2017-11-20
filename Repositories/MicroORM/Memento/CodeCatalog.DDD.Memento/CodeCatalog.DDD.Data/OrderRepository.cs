@@ -10,8 +10,12 @@ using Dapper;
 
 namespace CodeCatalog.DDD.Data
 {
-    internal class OrderRepository: RepositoryBase, IOrderRepository
+    public class OrderRepository: RepositoryBase, IOrderRepository
     {
+        public OrderRepository(string databaseFileName):base(databaseFileName)
+        {
+        }
+
         public void Add(Order order)
         {
             var orderState = order.GetState();
@@ -31,13 +35,13 @@ namespace CodeCatalog.DDD.Data
             var parameters =  BuildParameters();
 
             Connection
-                    .Execute(sql: "insert into OrderLine"
+                    .Execute(sql: "insert into OrderLines"
                                   + "("
                                   + "OrderId, "
                                   + "ProductId, "
                                   + "Quantity, "
                                   + "Price, "
-                                  + "Discount "
+                                  + "Discount) "
                                   + "values"
                                   + "("
                                   + ":OrderId, "
@@ -53,13 +57,13 @@ namespace CodeCatalog.DDD.Data
                 return orderLines
                         .Select(orderLine =>
                                     new DynamicParameters(new
-                                                          {
-                                                              OrderId = orderId,
-                                                              ProductId = orderLine.ProductId,
-                                                              Quantity = orderLine.Quantity,
-                                                              Price = orderLine.Price,
-                                                              Discount = orderLine.Discount
-                                                          }))
+                                    {
+                                        OrderId = orderId.ToSqliteGuid(),
+                                        ProductId = (long)orderLine.ProductId,
+                                        Quantity = orderLine.Quantity,
+                                        Price = orderLine.Price,
+                                        Discount = orderLine.Discount
+                                    }))
                         .ToList();
             }
         }
@@ -67,7 +71,7 @@ namespace CodeCatalog.DDD.Data
         private void InsertOrder(Guid orderId, long customerId)
         {
             Connection
-                    .Execute(sql: "insert into Order"
+                    .Execute(sql: "insert into Orders"
                                   + "("
                                   + "Id, "
                                   + "CustomerId, "
@@ -81,7 +85,7 @@ namespace CodeCatalog.DDD.Data
                                   + ");",
                              param: new
                                     {
-                                        Id = orderId,
+                                        Id = orderId.ToSqliteGuid(),
                                         CustomerId = customerId
                                     });
         }

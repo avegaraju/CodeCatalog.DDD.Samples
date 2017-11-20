@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using CodeCatalog.DDD.Domain.Types;
 using CodeCatalog.DDD.Domain.UseCases;
+
 using FluentAssertions;
+
 using Xunit;
 
-namespace CodeCatalog.DDD.Domain.Tests.Unit
+namespace CodeCatalog.DDD.Domain.Test.Unit
 {
     public class OrderLineFactoryTests
     {
