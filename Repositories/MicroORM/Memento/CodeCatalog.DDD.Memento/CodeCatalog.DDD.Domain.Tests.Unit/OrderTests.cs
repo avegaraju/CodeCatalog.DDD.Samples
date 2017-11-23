@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using CodeCatalog.DDD.Domain.Exceptions;
 using CodeCatalog.DDD.Domain.Types;
 using CodeCatalog.DDD.Domain.UseCases;
 
@@ -41,6 +42,55 @@ namespace CodeCatalog.DDD.Domain.Test.Unit
             var expectedAmountToPayForPrivilegeCustomer = CalculateAmountToPayForPrivilegeCsustomer(expectedAmountToPay);
 
             amountToPay.Should().Be(expectedAmountToPayForPrivilegeCustomer);
+        }
+
+        [Fact]
+        public void UpdateOrderWith_WithoutOrderCheckoutIsNotAllowed()
+        {
+            var orderRequest = CreateDefaultOrderRequest();
+            orderRequest.IsPrivilegeCustomer = true;
+
+            var order = Order.OrderFactory.CreateFrom(Guid.NewGuid(), orderRequest);
+
+            Action action = () => order.UpdateOrderWith(new PaymentReference()
+                                                                 {
+                                                                     TransactionId = Guid.NewGuid()
+                                                                 });
+
+            action.ShouldThrow<OrderNotCheckedOutException>()
+                  .Which.Message
+                  .Should().StartWith("Order payment status cannot "
+                                      + "be updated without cheking "
+                                      + "out the order.");
+        }
+
+        [Fact]
+        public void UpdateOrderWith_UpdatesTheOrder()
+        {
+            var expectedPaymentTransactionReference = Guid.NewGuid();
+
+            var orderRequest = CreateDefaultOrderRequest();
+            orderRequest.IsPrivilegeCustomer = true;
+
+            var order = Order.OrderFactory.CreateFrom(Guid.NewGuid(), orderRequest);
+
+            var orderAmount =  order.CheckOut();
+
+            order.UpdateOrderWith(new PaymentReference()
+                                           {
+                                               TransactionId = expectedPaymentTransactionReference
+                                           });
+
+            var orderState = order.GetState();
+
+            orderState.OrderAmount
+                .Should().Be(orderAmount);
+
+            orderState.PaymentProcessed
+                .Should().BeTrue();
+
+            orderState.PaymentTransactionReference
+                .Should().Be(expectedPaymentTransactionReference);
         }
 
         private double CalculateAmountToPayForPrivilegeCsustomer(double expectedAmountToPay)
