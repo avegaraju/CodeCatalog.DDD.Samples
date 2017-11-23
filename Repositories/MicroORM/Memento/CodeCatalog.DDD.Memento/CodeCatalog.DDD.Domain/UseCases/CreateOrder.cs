@@ -33,7 +33,7 @@ namespace CodeCatalog.DDD.Domain.UseCases
             }
             catch (Exception e)
             {
-                throw new OrderCreationException($"Order cration for Id {orderId} failed.", e);
+                throw new OrderCreationException($"Order creation for Id {orderId} failed.", e);
             }
 
             return orderId;
