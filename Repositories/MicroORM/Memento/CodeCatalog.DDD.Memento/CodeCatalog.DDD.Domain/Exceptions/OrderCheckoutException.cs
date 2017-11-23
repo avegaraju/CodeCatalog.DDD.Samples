@@ -8,6 +8,5 @@ namespace CodeCatalog.DDD.Domain.Exceptions
             :base(message, innerException)
         {
         }
-
     }
 }
