@@ -85,6 +85,23 @@ namespace CodeCatalog.DDD.Domain.Test.Unit
                 .Should().Be(TransactionStatus.Committed);
         }
 
+        [Fact]
+        public void Checkout_WhenRepositoryThrowsException_ReThrowsCheckoutException()
+        {
+            _orderRepositoryMock
+                    .Setup(obj => obj.FindBy(It.IsAny<Guid>()))
+                    .Throws<Exception>();
+
+            var sut = new CheckOutOrder(_orderRepositoryMock.Object);
+
+            Action action = ()=>  sut.Checkout(Guid.NewGuid());
+
+            action
+                .ShouldThrow<OrderCheckoutException>()
+                .Which.Message
+                .Should().StartWith("Cannot checkout order");
+        }
+
         private static OrderRequest CreateDefaultOrderRequest()
         {
             return new OrderRequest()
