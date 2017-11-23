@@ -18,9 +18,11 @@ namespace CodeCatalog.DDD.Domain.Test.Unit
     public class UseCaseTests
     {
         private readonly Mock<IOrderRepository> _orderRepositoryMock;
+        private readonly Mock<IPaymentService> _paymentServiceMock;
 
         public UseCaseTests()
         {
+            _paymentServiceMock = new Mock<IPaymentService>();
             _orderRepositoryMock = new Mock<IOrderRepository>();
         }
 
@@ -100,6 +102,104 @@ namespace CodeCatalog.DDD.Domain.Test.Unit
                 .ShouldThrow<OrderCheckoutException>()
                 .Which.Message
                 .Should().StartWith("Cannot checkout order");
+        }
+
+        [Fact]
+        public void Pay_WhenPaymentServiceThrowsException_ReturnsPaymentResultWithFailedStatus()
+        {
+            _paymentServiceMock
+                    .Setup(obj => obj.Pay(It.IsAny<double>(), It.IsAny<Guid>()))
+                    .Throws<Exception>();
+
+            var sut = new OrderPayment(_orderRepositoryMock.Object,
+                                       _paymentServiceMock.Object);
+
+            var paymentResult = sut.Pay(Guid.NewGuid(), 10.10 );
+
+            paymentResult.Status
+                         .Should().Be(PaymentStatus.Failed);
+        }
+
+        [Fact]
+        public void Pay_WhenPaymentServiceThrowsException_OrderIsNotSaved()
+        {
+            _paymentServiceMock
+                    .Setup(obj => obj.Pay(It.IsAny<double>(), It.IsAny<Guid>()))
+                    .Throws<Exception>();
+
+            var sut = new OrderPayment(_orderRepositoryMock.Object,
+                                       _paymentServiceMock.Object);
+
+            Action action = () => sut.Pay(Guid.NewGuid(), 10.10);
+
+            _orderRepositoryMock
+                    .Verify(obj => obj.Save(It.IsAny<Order>()), Times.Never);
+        }
+
+        [Fact]
+        public void Pay_WhenPaymentSucceeds_OrderIsSaved()
+        {
+            var order = Order
+                    .OrderFactory
+                    .CreateFrom(Guid.NewGuid(),
+                                CreateDefaultOrderRequest());
+            _paymentServiceMock
+                    .Setup(obj => obj.Pay(It.IsAny<double>(), It.IsAny<Guid>()))
+                    .Returns(() => new PaymentReference()
+                                   {
+                                       TransactionId = Guid.NewGuid()
+                                   });
+
+            _orderRepositoryMock
+                    .Setup(obj => obj.FindBy(It.IsAny<Guid>()))
+                    .Returns(() => order);
+
+            var sut = new OrderPayment(_orderRepositoryMock.Object,
+                                       _paymentServiceMock.Object);
+
+            var checkOutOrder = new CheckOutOrder(_orderRepositoryMock.Object);
+
+            checkOutOrder.Checkout(Guid.NewGuid());
+
+            sut.Pay(Guid.NewGuid(), 10.10);
+
+            _orderRepositoryMock
+                    .Verify(obj => obj.Save(It.IsAny<Order>()), Times.Exactly(1));
+        }
+
+        [Fact]
+        public void Pay_WhenPaymentSucceedsButOrderSaveFailed_ReturnsPaymentResultWithFailedStatus()
+        {
+            var order = Order
+                    .OrderFactory
+                    .CreateFrom(Guid.NewGuid(),
+                                CreateDefaultOrderRequest());
+            _paymentServiceMock
+                    .Setup(obj => obj.Pay(It.IsAny<double>(), It.IsAny<Guid>()))
+                    .Returns(() => new PaymentReference()
+                                   {
+                                       TransactionId = Guid.NewGuid()
+                                   });
+
+            _orderRepositoryMock
+                    .Setup(obj => obj.FindBy(It.IsAny<Guid>()))
+                    .Returns(() => order);
+
+            _orderRepositoryMock
+                    .Setup(obj => obj.Save(order))
+                    .Throws<Exception>();
+
+            var sut = new OrderPayment(_orderRepositoryMock.Object,
+                                       _paymentServiceMock.Object);
+
+            var checkOutOrder = new CheckOutOrder(_orderRepositoryMock.Object);
+
+            checkOutOrder.Checkout(Guid.NewGuid());
+
+            var paymentResult = sut.Pay(Guid.NewGuid(), 10.10);
+
+            paymentResult.Status
+                    .Should().Be(PaymentStatus.Failed);
         }
 
         private static OrderRequest CreateDefaultOrderRequest()

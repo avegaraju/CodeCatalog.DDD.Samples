@@ -2,13 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using CodeCatalog.DDD.Domain.Exceptions;
+using CodeCatalog.DDD.Domain.Types;
+
 namespace CodeCatalog.DDD.Domain
 {
     public partial class Order
     {
+        private double _orderAmount = 0d;
+        private Guid _paymentTransactionReference = Guid.Empty;
+
         internal Guid OrderId { get; }
         internal Customer Customer { get; }
         internal IReadOnlyCollection<OrderLine> OrderLines { get; }
+        
 
         private Order(Guid orderId,
                       Customer customer,
@@ -34,7 +41,7 @@ namespace CodeCatalog.DDD.Domain
             if (Customer.IsPrivilegeCustomer)
                 ApplyAdditionalDiscount();
 
-            return amountToPay;
+            return  _orderAmount = amountToPay;
 
             double ApplyDiscount(OrderLine orderLine, double discountAmount)
             {
@@ -52,13 +59,28 @@ namespace CodeCatalog.DDD.Domain
             }
         }
 
+        public void UpdateOrderWith(PaymentReference paymentReference)
+        {
+            if (_orderAmount == 0d)
+            {
+                throw  new OrderNotCheckedOutException("Order payment status cannot "
+                                                       + "be updated without cheking "
+                                                       + "out the order.");
+            }
+
+            _paymentTransactionReference = paymentReference.TransactionId;
+        }
+
         public OrderState GetState()
         {
             return new OrderState()
                    {
                        OrderId = this.OrderId,
                        Customer = this.Customer.GetState(),
-                       OrderLines = GetState(this.OrderLines)
+                       OrderLines = GetState(this.OrderLines),
+                       PaymentProcessed = _paymentTransactionReference != Guid.Empty,
+                       PaymentTransactionReference = _paymentTransactionReference,
+                       OrderAmount = _orderAmount
                    };
         }
 

@@ -8,5 +8,8 @@ namespace CodeCatalog.DDD.Domain
         public Guid OrderId { get; set; }
         public CustomerState Customer { get; set; }
         public IEnumerable<OrderLineState> OrderLines { get; set; }
+        public double OrderAmount { get; set; }
+        public bool PaymentProcessed { get; set; }
+        public Guid PaymentTransactionReference { get; set; }
     }
 }
