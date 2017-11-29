@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 using CodeCatalog.DDD.Domain.Types;
 using CodeCatalog.DDD.Domain.UseCases;
@@ -18,6 +19,8 @@ namespace CodeCatalog.DDD.Client
         }
         public OrderRequest BuildOrderRequest()
         {
+            _orderRequest.ProductRequests = _productRequests.ToList();
+
             return _orderRequest;
         }
 

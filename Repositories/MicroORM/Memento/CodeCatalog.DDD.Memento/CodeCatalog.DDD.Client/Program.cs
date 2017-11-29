@@ -2,6 +2,7 @@
 
 using CodeCatalog.DDD.Data;
 using CodeCatalog.DDD.Domain.Infrastructure;
+using CodeCatalog.DDD.Domain.Types;
 using CodeCatalog.DDD.Domain.UseCases;
 using CodeCatalog.DDD.Infrastucture;
 
@@ -44,6 +45,7 @@ namespace CodeCatalog.DDD.Client
                                 discount: 8.2m,
                                 price: 329,
                                 quantity: 1)
+                    .ForCustomer((CustomerId)1)
                     .BuildOrderRequest();
 
             var newOrderId
@@ -56,6 +58,18 @@ namespace CodeCatalog.DDD.Client
             var transactionResult = new OrderPayment(_container.GetInstance<IOrderRepository>(),
                                                      _container.GetInstance<IPaymentService>())
                     .Pay(newOrderId, amountToPay);
+
+            if (transactionResult.PaymentStatus == PaymentStatus.Succeeded
+                && transactionResult.OrderTransactionStatus == OrderTransactionStatus.Succeeded)
+            {
+                Console.WriteLine("Your order has been placed.");
+            }
+            else
+            {
+                Console.WriteLine("Order could not be placed. Please try again.");
+            }
+
+            Console.ReadLine();
         }
 
         private static ShoppingCart CreateShoppingCart()
