@@ -16,8 +16,8 @@ namespace CodeCatalog.DDD.Data.Test.Integration
 {
     public class OrderRepositoryTests
     {
-        private const double DEFAULT_DISCOUNT = 10.3;
-        private const double DEFAULT_PRICE = 12;
+        private const decimal DEFAULT_DISCOUNT = 10.3m;
+        private const decimal DEFAULT_PRICE = 12;
         private const long DEFAULT_PRODUCTID = 1;
         private const int DEFAULT_QUANTITY = 2;
 

@@ -93,7 +93,7 @@ namespace CodeCatalog.DDD.Domain.Test.Unit
                 .Should().Be(expectedPaymentTransactionReference);
         }
 
-        private double CalculateAmountToPayForPrivilegeCsustomer(double expectedAmountToPay)
+        private decimal CalculateAmountToPayForPrivilegeCsustomer(decimal expectedAmountToPay)
         {
             return (expectedAmountToPay * 5) / 100;
         }
@@ -108,7 +108,7 @@ namespace CodeCatalog.DDD.Domain.Test.Unit
                 {
                     new ProductRequest()
                     {
-                        Discount = 10.3,
+                        Discount = 10.3m,
                         Price = 12,
                         ProductId = (ProductId) 1,
                         Quantity = 2
@@ -117,16 +117,16 @@ namespace CodeCatalog.DDD.Domain.Test.Unit
             };
         }
 
-        private double CalculateAmountToPay(Order order)
+        private decimal CalculateAmountToPay(Order order)
         {
-            double amountToPay = 0;
+            decimal amountToPay = 0;
 
             var orderState =  order.GetState();
             
             foreach (var orderLine in orderState.OrderLines)
             {
-                double discountAmount = CalculateApplicableDiscount(orderLine);
-                double productPriceAfterDiscount = ApplyDiscount(orderLine, discountAmount);
+                decimal discountAmount = CalculateApplicableDiscount(orderLine);
+                decimal productPriceAfterDiscount = ApplyDiscount(orderLine, discountAmount);
 
                 amountToPay += productPriceAfterDiscount;
             }
@@ -134,12 +134,12 @@ namespace CodeCatalog.DDD.Domain.Test.Unit
             return amountToPay;
         }
 
-        private static double ApplyDiscount(OrderLineState orderLine, double discountAmount)
+        private static decimal ApplyDiscount(OrderLineState orderLine, decimal discountAmount)
         {
             return (orderLine.Price - discountAmount) * orderLine.Quantity;
         }
 
-        private static double CalculateApplicableDiscount(OrderLineState orderLine)
+        private static decimal CalculateApplicableDiscount(OrderLineState orderLine)
         {
             return (orderLine.Price * orderLine.Discount) / 100;
         }

@@ -6,6 +6,6 @@ namespace CodeCatalog.DDD.Domain.Infrastructure
 {
     public interface IPaymentService
     {
-        PaymentReference Pay(double amount, Guid orderId);
+        PaymentReference Pay(decimal amount, Guid orderId);
     }
 }

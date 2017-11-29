@@ -5,4 +5,14 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="SimpleInjector" Version="4.0.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeCatalog.DDD.Data\CodeCatalog.DDD.Data.csproj" />
+    <ProjectReference Include="..\CodeCatalog.DDD.Domain\CodeCatalog.DDD.Domain.csproj" />
+    <ProjectReference Include="..\CodeCatalog.DDD.Infrastucture\CodeCatalog.DDD.Infrastucture.csproj" />
+  </ItemGroup>
+
 </Project>

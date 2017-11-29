@@ -5,13 +5,13 @@ namespace CodeCatalog.DDD.Domain
     public partial class OrderLine
     {
         internal ProductId ProductId { get; }
-        internal double Discount { get; }
-        internal double Price { get; }
+        internal decimal Discount { get; }
+        internal decimal Price { get; }
         internal uint Quantity { get; }
 
         private OrderLine(ProductId productId,
-                          double discount,
-                          double price,
+                          decimal discount,
+                          decimal price,
                           uint quantity)
         {
             ProductId = productId;

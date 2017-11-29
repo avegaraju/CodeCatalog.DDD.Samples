@@ -105,18 +105,18 @@ namespace CodeCatalog.DDD.Domain.Test.Unit
         }
 
         [Fact]
-        public void Pay_WhenPaymentServiceThrowsException_ReturnsPaymentResultWithFailedStatus()
+        public void Pay_WhenPaymentServiceThrowsException_ReturnsTransactionResultWithFailedStatus()
         {
             _paymentServiceMock
-                    .Setup(obj => obj.Pay(It.IsAny<double>(), It.IsAny<Guid>()))
+                    .Setup(obj => obj.Pay(It.IsAny<decimal>(), It.IsAny<Guid>()))
                     .Throws<Exception>();
 
             var sut = new OrderPayment(_orderRepositoryMock.Object,
                                        _paymentServiceMock.Object);
 
-            var paymentResult = sut.Pay(Guid.NewGuid(), 10.10 );
+            var paymentResult = sut.Pay(Guid.NewGuid(), 10.10m);
 
-            paymentResult.Status
+            paymentResult.PaymentStatus
                          .Should().Be(PaymentStatus.Failed);
         }
 
@@ -124,13 +124,13 @@ namespace CodeCatalog.DDD.Domain.Test.Unit
         public void Pay_WhenPaymentServiceThrowsException_OrderIsNotSaved()
         {
             _paymentServiceMock
-                    .Setup(obj => obj.Pay(It.IsAny<double>(), It.IsAny<Guid>()))
+                    .Setup(obj => obj.Pay(It.IsAny<decimal>(), It.IsAny<Guid>()))
                     .Throws<Exception>();
 
             var sut = new OrderPayment(_orderRepositoryMock.Object,
                                        _paymentServiceMock.Object);
 
-            Action action = () => sut.Pay(Guid.NewGuid(), 10.10);
+            Action action = () => sut.Pay(Guid.NewGuid(), 10.10m);
 
             _orderRepositoryMock
                     .Verify(obj => obj.Save(It.IsAny<Order>()), Times.Never);
@@ -144,7 +144,7 @@ namespace CodeCatalog.DDD.Domain.Test.Unit
                     .CreateFrom(Guid.NewGuid(),
                                 CreateDefaultOrderRequest());
             _paymentServiceMock
-                    .Setup(obj => obj.Pay(It.IsAny<double>(), It.IsAny<Guid>()))
+                    .Setup(obj => obj.Pay(It.IsAny<decimal>(), It.IsAny<Guid>()))
                     .Returns(() => new PaymentReference()
                                    {
                                        TransactionId = Guid.NewGuid()
@@ -161,21 +161,21 @@ namespace CodeCatalog.DDD.Domain.Test.Unit
 
             checkOutOrder.Checkout(Guid.NewGuid());
 
-            sut.Pay(Guid.NewGuid(), 10.10);
+            sut.Pay(Guid.NewGuid(), 10.10m);
 
             _orderRepositoryMock
                     .Verify(obj => obj.Save(It.IsAny<Order>()), Times.Exactly(1));
         }
 
         [Fact]
-        public void Pay_WhenPaymentSucceedsButOrderSaveFailed_ReturnsPaymentResultWithFailedStatus()
+        public void Pay_WhenPaymentSucceedsButOrderSaveFailed_ReturnsTransactionResultWithFailedStatus()
         {
             var order = Order
                     .OrderFactory
                     .CreateFrom(Guid.NewGuid(),
                                 CreateDefaultOrderRequest());
             _paymentServiceMock
-                    .Setup(obj => obj.Pay(It.IsAny<double>(), It.IsAny<Guid>()))
+                    .Setup(obj => obj.Pay(It.IsAny<decimal>(), It.IsAny<Guid>()))
                     .Returns(() => new PaymentReference()
                                    {
                                        TransactionId = Guid.NewGuid()
@@ -196,10 +196,10 @@ namespace CodeCatalog.DDD.Domain.Test.Unit
 
             checkOutOrder.Checkout(Guid.NewGuid());
 
-            var paymentResult = sut.Pay(Guid.NewGuid(), 10.10);
+            var paymentResult = sut.Pay(Guid.NewGuid(), 10.10m);
 
-            paymentResult.Status
-                    .Should().Be(PaymentStatus.Failed);
+            paymentResult.OrderTransactionStatus
+                    .Should().Be(OrderTransactionStatus.Failed);
         }
 
         private static OrderRequest CreateDefaultOrderRequest()
@@ -212,7 +212,7 @@ namespace CodeCatalog.DDD.Domain.Test.Unit
                                          {
                                              new ProductRequest()
                                              {
-                                                 Discount = 10.3,
+                                                 Discount = 10.3m,
                                                  Price = 12,
                                                  ProductId = (ProductId) 1,
                                                  Quantity = 2

@@ -9,7 +9,7 @@ namespace CodeCatalog.DDD.Domain
 {
     public partial class Order
     {
-        private double _orderAmount = 0d;
+        private decimal _orderAmount = 0m;
         private Guid _paymentTransactionReference = Guid.Empty;
 
         internal Guid OrderId { get; }
@@ -26,14 +26,14 @@ namespace CodeCatalog.DDD.Domain
             OrderLines = orderLines;
         }
 
-        public double CheckOut()
+        public decimal CheckOut()
         {
-            double amountToPay = 0;
+            decimal amountToPay = 0;
 
             foreach (var orderLine in this.OrderLines)
             {
-                double discountAmount = GetApplicableDiscount(orderLine);
-                double productPriceAfterDiscount = ApplyDiscount(orderLine, discountAmount);
+                decimal discountAmount = GetApplicableDiscount(orderLine);
+                decimal productPriceAfterDiscount = ApplyDiscount(orderLine, discountAmount);
 
                 amountToPay += productPriceAfterDiscount;
             }
@@ -43,12 +43,12 @@ namespace CodeCatalog.DDD.Domain
 
             return  _orderAmount = amountToPay;
 
-            double ApplyDiscount(OrderLine orderLine, double discountAmount)
+            decimal ApplyDiscount(OrderLine orderLine, decimal discountAmount)
             {
                 return (orderLine.Price - discountAmount) * orderLine.Quantity;
             }
 
-            double GetApplicableDiscount(OrderLine orderLine)
+            decimal GetApplicableDiscount(OrderLine orderLine)
             {
                 return (orderLine.Price * orderLine.Discount) / 100;
             }
@@ -61,7 +61,7 @@ namespace CodeCatalog.DDD.Domain
 
         public void UpdateOrderWith(PaymentReference paymentReference)
         {
-            if (_orderAmount == 0d)
+            if (_orderAmount == 0m)
             {
                 throw  new OrderNotCheckedOutException("Order payment status cannot "
                                                        + "be updated without cheking "
