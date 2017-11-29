@@ -23,7 +23,7 @@ namespace CodeCatalog.DDD.Domain.Test.Unit
                 {
                     new ProductRequest()
                     {
-                        Discount = 10.3,
+                        Discount = 10.3m,
                         Price = 12,
                         ProductId = (ProductId) 1,
                         Quantity = 1

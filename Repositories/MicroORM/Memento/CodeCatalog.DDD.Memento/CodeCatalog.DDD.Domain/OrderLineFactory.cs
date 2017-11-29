@@ -42,7 +42,7 @@ namespace CodeCatalog.DDD.Domain
                 return false;
             }
 
-            private static double GetDiscountAmount(ProductRequest productRequest)
+            private static decimal GetDiscountAmount(ProductRequest productRequest)
             {
                 return (productRequest.Price * productRequest.Discount) / 100;
             }

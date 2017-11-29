@@ -18,18 +18,21 @@ namespace CodeCatalog.DDD.Domain.UseCases
             _paymentService = paymentService;
         }
 
-        public PaymentResult Pay(Guid orderId, double amount)
+        public TransactionResult Pay(Guid orderId, decimal amount)
         {
-            var paymentResult = new PaymentResult()
+            var transactionResult = new TransactionResult()
                                 {
-                                    Status = PaymentStatus.Failed
+                                    PaymentStatus = PaymentStatus.Failed,
+                                    OrderTransactionStatus = OrderTransactionStatus.Failed
                                 };
 
             try
             {
                 var  paymentReference = _paymentService.Pay(amount, orderId);
 
-                paymentResult.PaymentTransactionReference = paymentReference.TransactionId;
+                transactionResult.PaymentTransactionReference = paymentReference.TransactionId;
+
+                transactionResult.PaymentStatus = PaymentStatus.Succeeded;
 
                 try
                 {
@@ -39,19 +42,19 @@ namespace CodeCatalog.DDD.Domain.UseCases
 
                     _orderRepository.Save(order);
 
-                    paymentResult.Status = PaymentStatus.Succeeded;
+                    transactionResult.OrderTransactionStatus = OrderTransactionStatus.Succeeded;
                 }
                 catch (Exception e)
                 {
-                    paymentResult.Reason = e.Message;
+                    transactionResult.FailureReason = e.Message;
                 }
             }
             catch (Exception e)
             {
-                paymentResult.Reason = e.Message;
+                transactionResult.FailureReason = e.Message;
             }
 
-            return paymentResult;
+            return transactionResult;
         }
     }
 }

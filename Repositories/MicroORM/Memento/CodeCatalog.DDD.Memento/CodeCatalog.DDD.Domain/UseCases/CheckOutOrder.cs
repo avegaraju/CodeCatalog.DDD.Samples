@@ -14,7 +14,7 @@ namespace CodeCatalog.DDD.Domain.UseCases
             _orderRepository = orderRepository;
         }
 
-        public double Checkout(Guid orderId)
+        public decimal Checkout(Guid orderId)
         {
             try
             {
