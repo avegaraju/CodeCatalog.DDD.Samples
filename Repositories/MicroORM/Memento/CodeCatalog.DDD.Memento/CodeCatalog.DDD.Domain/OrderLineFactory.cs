@@ -23,10 +23,24 @@ namespace CodeCatalog.DDD.Domain
                     throw new ArgumentException("Quantity cannot be less than 1.");
 
                 return productRequests
-                    .Select(productRequest => new OrderLine(productRequest.ProductId,
-                        productRequest.Discount,
-                        productRequest.Price,
-                        productRequest.Quantity)).ToList();
+                        .Select(productRequest => new OrderLine(null,
+                                                                productRequest.ProductId,
+                                                                productRequest.Discount,
+                                                                productRequest.Price,
+                                                                productRequest.Quantity)).ToList();
+            }
+
+            public static OrderLine Make(OrderLineId orderLineId,
+                                         ProductId productId,
+                                         decimal discount,
+                                         decimal price,
+                                         uint quantity)
+            {
+                return new OrderLine(orderLineId,
+                                     productId,
+                                     discount,
+                                     price,
+                                     quantity);
             }
 
             private static bool IsDiscountGreaterThanProductPrice(

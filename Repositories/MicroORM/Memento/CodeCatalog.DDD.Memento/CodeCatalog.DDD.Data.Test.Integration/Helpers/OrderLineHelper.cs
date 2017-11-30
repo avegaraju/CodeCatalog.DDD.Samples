@@ -10,7 +10,7 @@ namespace CodeCatalog.DDD.Data.Test.Integration.Helpers
         public IEnumerable<OrderLineRow> Get(Guid orderId)
         {
             return Connection.Query<OrderLineRow>(sql: 
-                $@"select * from OrderLines where orderId = ""{orderId.ToSqliteGuid()};""");
+                $@"select * from OrderLines where orderId = ""{orderId.ToString()};""");
         }
     }
 }

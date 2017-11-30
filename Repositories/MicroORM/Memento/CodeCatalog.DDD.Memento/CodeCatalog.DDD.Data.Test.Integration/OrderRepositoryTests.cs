@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 
 using CodeCatalog.DDD.Data.Test.Integration.Helpers;
 using CodeCatalog.DDD.Domain;
@@ -53,7 +54,7 @@ namespace CodeCatalog.DDD.Data.Test.Integration
                 .Should().Be(orderRequest.CustomerId);
 
             orderRow.Id
-                .Should().Be(orderId.ToSqliteGuid());
+                .Should().Be(orderId.ToString());
 
             orderRow.PaymentProcessed
                     .Should().Be('N');
@@ -89,6 +90,85 @@ namespace CodeCatalog.DDD.Data.Test.Integration
                 orderLineRow.Quantity
                             .Should().Be(DEFAULT_QUANTITY);
             }
+        }
+
+        [Fact]
+        public void FindBy_FindsOrderById()
+        {
+            Guid orderId = Guid.NewGuid();
+
+            var orderRequest = CreateDefaultOrderRequest();
+
+            var order = Order.OrderFactory.CreateFrom(orderId, orderRequest);
+
+            OrderRepository sut = CreateSut();
+
+            sut.Add(order);
+
+            var persistedOrder = sut.FindBy(orderId);
+
+            var orderState = persistedOrder.GetState();
+
+            orderState.Customer.CustomerId
+                      .Should().Be(orderRequest.CustomerId);
+
+            orderState.OrderId
+                      .Should().Be(orderId);
+
+            orderState.PaymentProcessed
+                      .Should().BeFalse();
+
+            orderState.OrderLines
+                      .ShouldBeEquivalentTo(new[]
+                                            {
+                                                new
+                                                {
+                                                    Discount = DEFAULT_DISCOUNT,
+                                                    Price = DEFAULT_PRICE,
+                                                    ProductId = (ProductId)DEFAULT_PRODUCTID,
+                                                    Quantity = DEFAULT_QUANTITY
+                                                }
+                                            }.ToList());
+        }
+
+        [Fact]
+        public void Save_UpdatesOrder()
+        {
+            var transactionId = Guid.NewGuid();
+            Guid orderId = Guid.NewGuid();
+
+            var orderRequest = CreateDefaultOrderRequest();
+
+            var order = Order.OrderFactory.CreateFrom(orderId, orderRequest);
+
+            OrderRepository sut = CreateSut();
+
+            sut.Add(order);
+
+            var newOrder = sut.FindBy(orderId);
+
+            newOrder.CheckOut();
+            newOrder.UpdateOrderWith(new PaymentReference()
+                                     {
+                                         TransactionId = transactionId
+                                     });
+
+            sut.Save(newOrder);
+            var orderState = newOrder.GetState();
+
+            var updatedOrder = new OrderHelper().Get(orderId);
+
+            updatedOrder.CustomerId
+                        .Should().Be(orderState.Customer.CustomerId);
+
+            updatedOrder.OrderAmount
+                        .Should().Be(orderState.OrderAmount);
+
+            updatedOrder.PaymentProcessed
+                        .Should().Be('Y');
+
+            updatedOrder.PaymentTransactionReference
+                        .Should().Be(transactionId.ToString());
         }
 
         private static OrderRepository CreateSut()

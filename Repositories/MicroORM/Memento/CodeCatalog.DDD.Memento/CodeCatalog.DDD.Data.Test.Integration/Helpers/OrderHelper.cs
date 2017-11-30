@@ -12,7 +12,7 @@ namespace CodeCatalog.DDD.Data.Test.Integration.Helpers
             using (Connection)
             {
                 return Connection
-                        .QueryFirst<OrderRow>(sql: $@"select * from Orders where id = ""{orderId.ToSqliteGuid()}"";");
+                        .QueryFirst<OrderRow>(sql: $@"select * from Orders where id = ""{orderId.ToString()}"";");
             }
         }
     }
