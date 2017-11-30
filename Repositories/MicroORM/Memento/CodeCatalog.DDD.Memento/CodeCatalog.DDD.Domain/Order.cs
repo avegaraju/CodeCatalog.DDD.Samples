@@ -15,15 +15,18 @@ namespace CodeCatalog.DDD.Domain
         internal Guid OrderId { get; }
         internal Customer Customer { get; }
         internal IReadOnlyCollection<OrderLine> OrderLines { get; }
+        internal bool PaymentProcessed { get; }
         
 
         private Order(Guid orderId,
                       Customer customer,
+                      bool paymentProcessed,
                       IReadOnlyCollection<OrderLine> orderLines)
         {
             OrderId = orderId;
             Customer = customer;
             OrderLines = orderLines;
+            PaymentProcessed = paymentProcessed;
         }
 
         public decimal CheckOut()

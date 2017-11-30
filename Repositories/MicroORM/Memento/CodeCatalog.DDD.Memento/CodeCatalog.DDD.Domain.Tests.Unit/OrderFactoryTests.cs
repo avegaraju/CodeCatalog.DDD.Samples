@@ -38,6 +38,7 @@ namespace CodeCatalog.DDD.Domain.Test.Unit
             var expectedOrder = new
             {
                 OrderId = orderId,
+                PaymentProcessed = false,
                 Customer = Customer.CustomerFactory
                             .Create(request.CustomerId, 
                                     request.IsPrivilegeCustomer),

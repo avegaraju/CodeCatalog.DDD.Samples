@@ -29,6 +29,17 @@ namespace CodeCatalog.DDD.Domain
                         productRequest.Quantity)).ToList();
             }
 
+            public static OrderLine Make(ProductId productId,
+                                         decimal discount,
+                                         decimal price,
+                                         uint quantity)
+            {
+                return new OrderLine((ProductId)productId,
+                                     discount,
+                                     price,
+                                     quantity);
+            }
+
             private static bool IsDiscountGreaterThanProductPrice(
                 IReadOnlyCollection<ProductRequest> productRequests)
             {

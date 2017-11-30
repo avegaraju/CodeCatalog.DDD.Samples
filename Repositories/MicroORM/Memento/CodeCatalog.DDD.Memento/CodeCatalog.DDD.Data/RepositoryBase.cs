@@ -70,8 +70,8 @@ namespace CodeCatalog.DDD.Data
                                    + "OrderId text not null, "
                                    + "ProductId integer not null, "
                                    + "Quantity integer not null ,"
-                                   + "Price double not null, "
-                                   + "Discount double not null, "
+                                   + "Price decimal(10,5) not null, "
+                                   + "Discount decimal(10,5) not null, "
                                    + "FOREIGN KEY (OrderId) REFERENCES Orders(Id), "
                                    + "FOREIGN KEY (ProductId) REFERENCES Products(Id));");
             }
