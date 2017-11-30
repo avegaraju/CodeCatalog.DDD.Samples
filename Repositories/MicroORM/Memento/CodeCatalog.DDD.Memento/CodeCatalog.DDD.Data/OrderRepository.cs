@@ -91,7 +91,30 @@ namespace CodeCatalog.DDD.Data
 
         public void Save(Order order)
         {
-            throw new NotImplementedException();
+            var orderState = order.GetState();
+
+            using (Connection)
+            {
+                UpdateOrder(orderState.OrderId,
+                            orderState.Customer.CustomerId,
+                            orderState.PaymentProcessed,
+                            orderState.OrderAmount,
+                            orderState.PaymentTransactionReference);
+            }
+        }
+
+        private void UpdateOrder(Guid orderId,
+                                 long customerId,
+                                 bool paymentProcessed,
+                                 decimal orderAmount,
+                                 Guid paymentTransactionReference)
+        {
+            Connection.Execute(sql: $"update ORDERS "
+                                    + $"set CUSTOMERID = {customerId}, "
+                                    + $"PAYMENTPROCESSED = '{paymentProcessed.ToChar()}', "
+                                    + $"ORDERAMOUNT = {orderAmount}, "
+                                    + $@"PAYMENTTRANSACTIONREFERENCE = ""{paymentTransactionReference.ToString()}"" "
+                                    + $@"where ID = ""{orderId.ToString()}""; ");
         }
 
         public Order FindBy(Guid orderId)
@@ -121,7 +144,8 @@ namespace CodeCatalog.DDD.Data
                     = orderLineRows
                             .Select(ol => OrderLine
                                             .OrderLineFactory
-                                            .Make((ProductId)(ulong)ol.ProductId,
+                                            .Make((OrderLineId)(ulong)ol.Id,
+                                                  (ProductId)(ulong)ol.ProductId,
                                                   ol.Discount,
                                                   ol.Price,
                                                   (uint)ol.Quantity));

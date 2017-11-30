@@ -13,5 +13,10 @@ namespace CodeCatalog.DDD.Data
         {
             return new Guid(guidAsString);
         }
+
+        public static char ToChar(this bool trueOrFalse)
+        {
+            return trueOrFalse ? 'Y' : 'N';
+        }
     }
 }

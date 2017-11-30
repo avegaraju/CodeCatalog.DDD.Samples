@@ -3,7 +3,7 @@
     internal class OrderRow
     {
         public string Id { get; set; }
-        public int CustomerId { get; set; }
+        public long CustomerId { get; set; }
         public char PaymentProcessed { get; set; }
     }
 }

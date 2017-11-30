@@ -83,6 +83,8 @@ namespace CodeCatalog.DDD.Data
                                    + "Id text primary key, "
                                    + "CustomerId integer not null, "
                                    + "PaymentProcessed char not null, "
+                                   + "OrderAmount decimal(10,5), "
+                                   + "PaymentTransactionReference text, "
                                    + "FOREIGN KEY (CustomerId) REFERENCES Customers(Id));");
             }
         }

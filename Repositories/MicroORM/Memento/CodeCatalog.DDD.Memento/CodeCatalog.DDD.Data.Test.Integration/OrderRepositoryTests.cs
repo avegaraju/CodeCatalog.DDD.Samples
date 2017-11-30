@@ -115,6 +115,9 @@ namespace CodeCatalog.DDD.Data.Test.Integration
             orderState.OrderId
                       .Should().Be(orderId);
 
+            orderState.PaymentProcessed
+                      .Should().BeFalse();
+
             orderState.OrderLines
                       .ShouldBeEquivalentTo(new[]
                                             {
@@ -126,6 +129,46 @@ namespace CodeCatalog.DDD.Data.Test.Integration
                                                     Quantity = DEFAULT_QUANTITY
                                                 }
                                             }.ToList());
+        }
+
+        [Fact]
+        public void Save_UpdatesOrder()
+        {
+            var transactionId = Guid.NewGuid();
+            Guid orderId = Guid.NewGuid();
+
+            var orderRequest = CreateDefaultOrderRequest();
+
+            var order = Order.OrderFactory.CreateFrom(orderId, orderRequest);
+
+            OrderRepository sut = CreateSut();
+
+            sut.Add(order);
+
+            var newOrder = sut.FindBy(orderId);
+
+            newOrder.CheckOut();
+            newOrder.UpdateOrderWith(new PaymentReference()
+                                     {
+                                         TransactionId = transactionId
+                                     });
+
+            sut.Save(newOrder);
+            var orderState = newOrder.GetState();
+
+            var updatedOrder = new OrderHelper().Get(orderId);
+
+            updatedOrder.CustomerId
+                        .Should().Be(orderState.Customer.CustomerId);
+
+            updatedOrder.OrderAmount
+                        .Should().Be(orderState.OrderAmount);
+
+            updatedOrder.PaymentProcessed
+                        .Should().Be('Y');
+
+            updatedOrder.PaymentTransactionReference
+                        .Should().Be(transactionId.ToString());
         }
 
         private static OrderRepository CreateSut()
