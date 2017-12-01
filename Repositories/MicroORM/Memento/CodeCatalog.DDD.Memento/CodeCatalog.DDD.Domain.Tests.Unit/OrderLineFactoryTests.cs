@@ -32,6 +32,7 @@ namespace CodeCatalog.DDD.Domain.Test.Unit
 
             var expectedObject = new
             {
+                OrderLineId = (OrderLineId?)null,
                 ProductId = (ProductId)1,
                 Price = 200,
                 Discount = 10,

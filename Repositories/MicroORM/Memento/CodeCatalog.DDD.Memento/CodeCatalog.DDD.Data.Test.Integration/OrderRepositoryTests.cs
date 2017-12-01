@@ -128,7 +128,8 @@ namespace CodeCatalog.DDD.Data.Test.Integration
                                                     ProductId = (ProductId)DEFAULT_PRODUCTID,
                                                     Quantity = DEFAULT_QUANTITY
                                                 }
-                                            }.ToList());
+                                            }.ToList(),
+                                            opt => opt.ExcludingMissingMembers());
         }
 
         [Fact]
