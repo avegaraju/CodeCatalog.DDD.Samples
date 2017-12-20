@@ -82,7 +82,7 @@ Task("Test-Unit")
                 project.FullPath,
                 new DotNetCoreTestSettings()
                 {
-                    Configuration = "debug",
+                    Configuration = "release",
                     NoBuild = true
                 });
         }
@@ -98,7 +98,7 @@ Task("Test-Integration")
                 project.FullPath,
                 new DotNetCoreTestSettings()
                 {
-                    Configuration = "debug",
+                    Configuration = "release",
                     NoBuild = true
                 });
         }
